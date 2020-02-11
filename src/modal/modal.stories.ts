@@ -201,7 +201,7 @@ storiesOf("Components|Modal", module)
 			modalContent: text("modalContent", "A change in our Terms of Service takes effect June 1st, 2020."),
 				buttons: [{
 					text: "Accept",
-					type: 'primary--single',
+					type: "primary--single",
 					click: () => alert("Accept button clicked")
 				}]
 		}
