@@ -183,6 +183,31 @@ storiesOf("Components|Modal", module)
 				"the user needs to address immediately. Passive modal notifications are persistent on screen")
 		}
 	}))
+	.add("Acknowledgement", () => ({
+		template: `
+		<app-alert-modal-story
+			[modalType]="modalType"
+			[modalTitle]="modalTitle"
+			[size]="size"
+			[modalContent]="modalContent"
+			[buttons]="buttons">
+		</app-alert-modal-story>
+		<ibm-placeholder></ibm-placeholder>
+		`,
+		props: {
+			modalType: select("modalType", ["default", "danger"], "default"),
+			modalTitle: text("modalTitle", "Acknowledgement"),
+			size: select("size", ["xs", "sm", "default", "lg"], "xs"),
+			modalContent: text("modalContent", "A change in our Terms of Service takes effect June 1st, 2020."),
+				buttons: [{
+					text: "Accept",
+					type: 'primary--single',
+					click: () => alert("Accept button clicked")
+				}]
+		}
+
+
+	}))
 	.add("Documentation", () => ({
 		template: `
 			<ibm-documentation src="documentation/components/Modal.html"></ibm-documentation>

@@ -59,7 +59,17 @@ import { BaseModal } from "./base-modal.class";
 			<div #content class="bx--modal-content">
 				<p [innerHTML]="modalContent"></p>
 			</div>
-			<ibm-modal-footer *ngIf="buttons.length > 0">
+			<div *ngIf="buttons.length > 0 && buttons[0].type === 'primary--single'" style = "padding-top: 3rem">
+			<button
+			style="width: 50%; right:0 ;  height:64px; position:fixed; bottom:0"
+			ibmButton='primary'
+			(click)="buttonClicked(0)"
+			[id]="buttons[0].id"
+			[attr.modal-primary-focus]="(buttons[0].type.indexOf('primary') !== -1 ? '' : null)">
+			{{buttons[0].text}}
+		</button>
+			</div>
+			<ibm-modal-footer *ngIf="buttons.length > 0 && buttons[0].type != 'primary--single'">
 				<ng-container *ngFor="let button of buttons; let i = index">
 					<button
 						[ibmButton]="button.type"

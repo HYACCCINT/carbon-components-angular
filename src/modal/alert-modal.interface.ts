@@ -56,7 +56,8 @@ export enum ModalButtonType {
 	tertiary = "tertiary",
 	ghost = "ghost",
 	danger = "danger",
-	danger_primary = "danger--primary"
+	danger_primary = "danger--primary",
+	primary_single = "primary--single"
 }
 
 export interface ModalButton {
