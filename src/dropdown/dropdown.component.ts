@@ -25,6 +25,7 @@ import {
 
 import { AbstractDropdownView } from "./abstract-dropdown-view.class";
 import { I18n } from "./../i18n/i18n.module";
+// Import needed to avoid compiler issue.
 import { ListItem } from "./list-item.interface";
 import { DropdownService } from "./dropdown.service";
 import { ElementService } from "./../utils/utils.module";
@@ -70,8 +71,10 @@ import { ElementService } from "./../utils/utils.module";
 			[tabindex]="disabled ? -1 : 0">
 			<div
 				(click)="clearSelected()"
+				(keydown.enter)="clearSelected()"
 				*ngIf="type === 'multi' && getSelectedCount() > 0"
-				class="bx--list-box__selection--multi"
+				class="bx--tag--filter bx--list-box__selection--multi"
+				tabindex="0"
 				[title]="clearText">
 				{{getSelectedCount()}}
 				<svg
@@ -350,37 +353,39 @@ export class Dropdown implements OnInit, AfterContentInit, OnDestroy, ControlVal
 	writeValue(value: any) {
 		// cache the written value so we can use it in `AfterContentInit`
 		this.writtenValue = value;
-		// propagate null/falsey as an array (deselect everything)
-		if (!value) {
-			this.view.propagateSelected([value]);
-		} else if (this.type === "single") {
-			if (this.value) {
-				// clone the specified item and update its state
-				const newValue = Object.assign({}, this.view.getListItems().find(item => item[this.value] === value));
-				newValue.selected = true;
-				this.view.propagateSelected([newValue]);
-			} else {
-				// pass the singular value as an array of ListItem
+		this.view.onItemsReady(() => {
+			// propagate null/falsey as an array (deselect everything)
+			if (!value) {
 				this.view.propagateSelected([value]);
-			}
-		} else {
-			if (this.value) {
-				// clone the items and update their state based on the received value array
-				// this way we don't lose any additional metadata that may be passed in via the `items` Input
-				let newValues = [];
-				for (const v of value) {
-					for (const item of this.view.getListItems()) {
-						if (item[this.value] === v) {
-							newValues.push(Object.assign({}, item, { selected: true }));
+			} else if (this.type === "single") {
+				if (this.value) {
+					// clone the specified item and update its state
+					const newValue = Object.assign({}, this.view.getListItems().find(item => item[this.value] === value));
+					newValue.selected = true;
+					this.view.propagateSelected([newValue]);
+				} else {
+					// pass the singular value as an array of ListItem
+					this.view.propagateSelected([value]);
+				}
+			} else {
+				if (this.value) {
+					// clone the items and update their state based on the received value array
+					// this way we don't lose any additional metadata that may be passed in via the `items` Input
+					let newValues = [];
+					for (const v of value) {
+						for (const item of this.view.getListItems()) {
+							if (item[this.value] === v) {
+								newValues.push(Object.assign({}, item, { selected: true }));
+							}
 						}
 					}
+					this.view.propagateSelected(newValues);
+				} else {
+					// we can safely assume we're passing an array of `ListItem`s
+					this.view.propagateSelected(value);
 				}
-				this.view.propagateSelected(newValues);
-			} else {
-				// we can safely assume we're passing an array of `ListItem`s
-				this.view.propagateSelected(value);
 			}
-		}
+		});
 	}
 
 	onBlur() {

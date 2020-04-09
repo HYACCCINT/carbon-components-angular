@@ -36,7 +36,7 @@ export class Dialog implements OnInit, AfterViewInit, OnDestroy {
 	/**
 	 * One static event observable to handle window resizing.
 	 */
-	protected static resizeObservable: Observable<any> = fromEvent(window, "resize").pipe(throttleTime(100));
+	protected static resizeObservable: Observable<any> = fromEvent(window, "resize", { passive: true }).pipe(throttleTime(100));
 	/**
 	 * Emits event that handles the closing of a `Dialog` object.
 	 */
@@ -203,6 +203,13 @@ export class Dialog implements OnInit, AfterViewInit, OnDestroy {
 			} else {
 				pos = this.addGap[placement](positionService.findAbsolute(reference, target, placement));
 			}
+
+			if (this.dialogConfig.offset) {
+				// Apply vertical and horizontal offsets given through the dialogConfig
+				pos.top = pos.top + this.dialogConfig.offset.y;
+				pos.left = pos.left + this.dialogConfig.offset.x;
+			}
+
 			return pos;
 		};
 
